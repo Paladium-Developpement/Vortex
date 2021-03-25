@@ -23,6 +23,8 @@ import com.jagrosh.vortex.database.managers.PremiumManager;
 import com.jagrosh.vortex.utils.FormatUtil;
 import com.jagrosh.vortex.utils.OtherUtil;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -87,6 +89,7 @@ public class LookupCmd extends Command
             // if it's valid and we find a user, we're done
             if(id > 0 && lookupUser(id, event))
                 return;
+
             
             // require Vortex Plus for looking up guilds
             if(!vortex.getDatabase().premium.getPremiumInfo(event.getGuild()).level.isAtLeast(PremiumManager.Level.PLUS))

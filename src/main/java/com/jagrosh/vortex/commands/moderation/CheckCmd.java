@@ -22,6 +22,8 @@ import com.jagrosh.vortex.Vortex;
 import com.jagrosh.vortex.commands.ModCommand;
 import com.jagrosh.vortex.utils.FormatUtil;
 import java.util.List;
+
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild.Ban;
 import net.dv8tion.jda.api.entities.Member;
@@ -95,14 +97,23 @@ public class CheckCmd extends ModCommand
         int minutesMuted = vortex.getDatabase().tempmutes.timeUntilUnmute(event.getGuild(), user.getIdLong());
         Role mRole = vortex.getDatabase().settings.getSettings(event.getGuild()).getMutedRole(event.getGuild());
         int minutesBanned = vortex.getDatabase().tempbans.timeUntilUnban(event.getGuild(), user.getIdLong());
-        String str = "Moderation Information for "+FormatUtil.formatFullUser(user)+":\n"
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("Moderation Information for "+FormatUtil.formatFullUser(user)+":\n");
+        eb.addField(Action.STRIKE.getEmoji() + "Strikes", "**"+strikes+"**", true);
+        eb.addField(Action.MUTE.getEmoji() + "Muted", "**" + (event.getGuild().isMember(user)
+            ? (event.getGuild().getMember(user).getRoles().contains(mRole) ? "Yes" : "No")
+            : "Not In Server") + "**", true);
+        eb.addField(Action.BAN.getEmoji() +"Basned", "**" + (ban==null ? "No**" : "Yes** (`" + ban.getReason() + "`)") , true);
+
+
+        /*String str =
                 + Action.STRIKE.getEmoji() + " Strikes: **"+strikes+"**\n"
                 + Action.MUTE.getEmoji() + " Muted: **" + (event.getGuild().isMember(user) 
                         ? (event.getGuild().getMember(user).getRoles().contains(mRole) ? "Yes" : "No") 
                         : "Not In Server") + "**\n"
                 + Action.TEMPMUTE.getEmoji() + " Mute Time Remaining: " + (minutesMuted <= 0 ? "N/A" : FormatUtil.secondsToTime(minutesMuted * 60)) + "\n"
                 + Action.BAN.getEmoji() + " Banned: **" + (ban==null ? "No**" : "Yes** (`" + ban.getReason() + "`)") + "\n"
-                + Action.TEMPBAN.getEmoji() + " Ban Time Remaining: " + (minutesBanned <= 0 ? "N/A" : FormatUtil.secondsToTime(minutesBanned * 60));
-        event.replySuccess(FormatUtil.filterEveryone(str));
+                + Action.TEMPBAN.getEmoji() + " Ban Time Remaining: " + (minutesBanned <= 0 ? "N/A" : FormatUtil.secondsToTime(minutesBanned * 60));*/
+        event.getChannel().sendMessage(eb.build()).queue();
     }
 }
